@@ -1,34 +1,51 @@
 def vacuum_cleaner(rooms, blocked_rooms, battery):
-	"""Clean dirty rooms while checking obstacles and available battery."""
-	for room, condition in rooms.items():
-		print(f"\nVacuum is in room {room}.")
+    """Clean dirty rooms while checking obstacles and available battery."""
+
+    previous_room = None
+
+    for room, condition in rooms.items():
+
+        # Show movement
+        if previous_room is None:
+            print(f"\nVacuum is starting in room {room}.")
+        else:
+            print(f"\nMoving from room {previous_room} to room {room}.")
+            print(f"Vacuum is now in room {room}.")
+
+        if battery <= 0:
+            print("Battery is empty. Stopping the vacuum.")
+            break
+
+        if room in blocked_rooms:
+            print(f"Room {room} is blocked. Skipping it.")
+            previous_room = room
+            continue
+
+        if condition not in ("dirty", "clean"):
+            print(f"Room {room} has an unknown condition: {condition}.")
+            previous_room = room
+            continue
+
+        if condition == "dirty":
+            rooms[room] = "clean"
+            battery -= 1
+            print(f"Room {room} cleaned. Battery remaining: {battery}.")
+        else:
+            print(f"Room {room} is already clean.")
+
+        previous_room = room
+
+    print("\nFinal room conditions:", rooms)
 
 
-		if battery <= 0:
-			print("Battery is empty. Stopping the vacuum.")
-			break
+room_conditions = {
+    "A": "dirty",
+    "B": "clean",
+    "C": "dirty"
+}
 
-
-		if room in blocked_rooms:
-			print(f"Room {room} is blocked. Skipping it.")
-			continue
-
-
-		if condition not in ("dirty", "clean"):
-			print(f"Room {room} has an unknown condition: {condition}.")
-			continue
-
-		if condition == "dirty":
-			rooms[room] = "clean"
-			battery -= 1
-			print(f"Room {room} cleaned. Battery remaining: {battery}.")
-		else:
-			print(f"Room {room} is already clean.")
-
-	print("\nFinal room conditions:", rooms)
-
-room_conditions = {"A": "dirty", "B": "clean"}
 blocked = {"B"}
-battery_level = 2
+battery_level = 3
 
 vacuum_cleaner(room_conditions, blocked, battery_level)
+A
