@@ -1,30 +1,23 @@
-def vacuum_cleaner(rooms, blocked_rooms, battery):
-    """Clean dirty rooms while checking obstacles and available battery."""
-
-    previous_room = None
-
+def vacuum_cleaner(rooms, obstacles, battery):
     for room, condition in rooms.items():
-
-        # Show movement
-        if previous_room is None:
-            print(f"\nVacuum is starting in room {room}.")
-        else:
-            print(f"\nMoving from room {previous_room} to room {room}.")
-            print(f"Vacuum is now in room {room}.")
+        print(f"\nVacuum is in room {room}.")
 
         if battery <= 0:
             print("Battery is empty. Stopping the vacuum.")
             break
 
-        if room in blocked_rooms:
-            print(f"Room {room} is blocked. Skipping it.")
-            previous_room = room
-            continue
+        # Obstacle inside the room
+        if room in obstacles:
+            print(f"Obstacle found in room {room}.")
 
-        if condition not in ("dirty", "clean"):
-            print(f"Room {room} has an unknown condition: {condition}.")
-            previous_room = room
-            continue
+            if obstacles[room] == "left":
+                print("Obstacle on left. Moving right.")
+            elif obstacles[room] == "right":
+                print("Obstacle on right. Moving left.")
+            else:
+                print("Obstacle in front. Moving left or right.")
+
+            print(f"Continuing to clean room {room}.")
 
         if condition == "dirty":
             rooms[room] = "clean"
@@ -33,19 +26,19 @@ def vacuum_cleaner(rooms, blocked_rooms, battery):
         else:
             print(f"Room {room} is already clean.")
 
-        previous_room = room
-
     print("\nFinal room conditions:", rooms)
 
 
 room_conditions = {
     "A": "dirty",
-    "B": "clean",
-    "C": "dirty"
+    "B": "dirty",
+    "C": "clean"
 }
 
-blocked = {"B"}
+obstacles = {
+    "B": "left"
+}
+
 battery_level = 3
 
-vacuum_cleaner(room_conditions, blocked, battery_level)
-A
+vacuum_cleaner(room_conditions, obstacles, battery_level)
