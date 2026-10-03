@@ -1,0 +1,144 @@
+
+def print_board(state):
+    for i in range(0, 9, 3):
+        print(state[i], state[i + 1], state[i + 2])
+    print()
+
+def get_neighbors(state):
+    neighbors = []
+
+    blank = state.index(0)
+    row = blank // 3
+    col = blank % 3
+
+    if row > 0:
+        new_state = list(state)
+        new_state[blank], new_state[blank - 3] = \
+            new_state[blank - 3], new_state[blank]
+        neighbors.append(tuple(new_state))
+
+    if row < 2:
+        new_state = list(state)
+        new_state[blank], new_state[blank + 3] = \
+            new_state[blank + 3], new_state[blank]
+        neighbors.append(tuple(new_state))
+
+    if col > 0:
+        new_state = list(state)
+        new_state[blank], new_state[blank - 1] = \
+            new_state[blank - 1], new_state[blank]
+        neighbors.append(tuple(new_state))
+
+    if col < 2:
+        new_state = list(state)
+        new_state[blank], new_state[blank + 1] = \
+            new_state[blank + 1], new_state[blank]
+        neighbors.append(tuple(new_state))
+
+    return neighbors
+
+
+def depth_limited_search(state, depth, path, visited, goal):
+
+    # Goal found
+    if state == goal:
+        return path
+
+    # Depth limit reached
+    if depth == 0:
+        return None
+
+    visited.add(state)
+
+    for next_state in get_neighbors(state):
+
+        if next_state not in visited:
+
+            result = depth_limited_search(
+                next_state,
+                depth - 1,
+                path + [next_state],
+                visited,
+                goal
+            )
+
+            if result is not None:
+                return result
+
+    visited.remove(state)
+
+    return None
+
+
+def ids(start, goal):
+
+    for depth in range(3):
+
+        print("Iteration", depth + 1,
+              "- Searching up to depth", depth)
+
+        result = depth_limited_search(
+            start,
+            depth,
+            [start],
+            set(),
+            goal
+        )
+
+        if result is not None:
+            return result, depth
+
+    return None, -1
+
+
+print("Enter the initial board")
+print("Use 0 for blank space")
+
+board = []
+
+for i in range(3):
+    row = list(map(int, input("Row " + str(i + 1) + ": ").split()))
+    board.extend(row)
+
+start = tuple(board)
+
+print("\nEnter the goal board")
+print("Use 0 for blank space")
+
+goal_board = []
+
+for i in range(3):
+    row = list(map(int, input("Goal Row " + str(i + 1) + ": ").split()))
+    goal_board.extend(row)
+
+goal = tuple(goal_board)
+
+
+
+print("\nInitial Board:")
+print_board(start)
+
+print("Goal Board:")
+print_board(goal)
+
+solution, depth = ids(start, goal)
+
+
+if solution is None:
+
+    print("Failure!")
+    print("Goal not found after 3 iterations.")
+    print("Maximum depth searched: 2")
+
+else:
+
+    print("\nSolution Found!")
+    print("Solution found at depth:", depth)
+    print("Number of moves:", len(solution) - 1)
+
+    print("\nSolution Path:")
+
+    for i, state in enumerate(solution):
+
+        print("Step", i)
+        print_board(state)
