@@ -1,0 +1,98 @@
+
+# Unification in First Order Logic
+
+def is_variable(x):
+    return x.islower() and x.isalpha()
+
+
+def unify(x, y, subst):
+
+    # Apply existing substitutions
+    if x in subst:
+        x = subst[x]
+
+    if y in subst:
+        y = subst[y]
+
+    # If both are same
+    if x == y:
+        print(x, "=", y, "Already matched")
+        return subst
+
+    # If x is a variable
+    if is_variable(x):
+        if x == y:
+            return subst
+
+        print("Replace", x, "with", y)
+        subst[x] = y
+        return subst
+
+    # If y is a variable
+    if is_variable(y):
+        print("Replace", y, "with", x)
+        subst[y] = x
+        return subst
+
+    # If constants are different
+    print("Cannot match", x, "and", y)
+    return None
+
+
+print("FOL UNIFICATION ALGORITHM")
+
+p1 = input("Enter first predicate name: ")
+p2 = input("Enter second predicate name: ")
+
+n1 = int(input("Enter number of arguments in first expression: "))
+n2 = int(input("Enter number of arguments in second expression: "))
+
+if p1 != p2:
+    print("Unification Failed: Predicate names are different")
+
+elif n1 != n2:
+    print("Unification Failed: Number of arguments are different")
+
+else:
+    expr1 = []
+    expr2 = []
+
+    print("\nEnter first expression arguments:")
+    for i in range(n1):
+        expr1.append(input(f"Argument {i+1}: "))
+
+    print("\nEnter second expression arguments:")
+    for i in range(n2):
+        expr2.append(input(f"Argument {i+1}: "))
+
+    subst = {}
+    success = True
+
+    print("\n--- Unification Steps ---")
+
+    for a, b in zip(expr1, expr2):
+        subst = unify(a, b, subst)
+
+        if subst is None:
+            success = False
+            break
+
+    if success:
+        print("\nUnification Successful!")
+        print("\nFinal Substitutions:")
+
+        for var, value in subst.items():
+            print(var, "is replaced by", value)
+
+        print("\nUnified Expression:")
+        result = []
+
+        for arg in expr1:
+            while arg in subst:
+                arg = subst[arg]
+            result.append(arg)
+
+        print(p1 + "(" + ", ".join(result) + ")")
+
+    else:
+        print("\nUnification Failed!")
