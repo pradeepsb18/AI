@@ -1,0 +1,82 @@
+
+# Unification in First Order Logic
+
+def is_variable(x):
+    return x.islower() and x.isalpha()
+
+def occurs_check(var, term, subst):
+    while isinstance(term, str) and term in subst:
+        term = subst[term]
+
+    return var == term
+
+
+def unify(x, y, subst):
+
+    # Apply existing substitutions
+    while isinstance(x, str) and x in subst:
+        x = subst[x]
+
+    while isinstance(y, str) and y in subst:
+        y = subst[y]
+
+    # If both are identical
+    if x == y:
+        return subst
+
+    # If x is a variable
+    if isinstance(x, str) and is_variable(x):
+        if occurs_check(x, y, subst):
+            return None
+        subst[x] = y
+        return subst
+
+    # If y is a variable
+    if isinstance(y, str) and is_variable(y):
+        if occurs_check(y, x, subst):
+            return None
+        subst[y] = x
+        return subst
+
+    # Different constants
+    return None
+
+
+print("FOL UNIFICATION")
+
+p1 = input("Enter first predicate name: ")
+p2 = input("Enter second predicate name: ")
+
+n1 = int(input("Enter number of arguments in first expression: "))
+n2 = int(input("Enter number of arguments in second expression: "))
+
+if p1 != p2 or n1 != n2:
+    print("Unification Failed")
+
+else:
+    expr1 = []
+    expr2 = []
+
+    print("\nEnter first expression arguments:")
+    for i in range(n1):
+        expr1.append(input(f"Argument {i+1}: "))
+
+    print("\nEnter second expression arguments:")
+    for i in range(n2):
+        expr2.append(input(f"Argument {i+1}: "))
+
+    subst = {}
+    success = True
+
+    for a, b in zip(expr1, expr2):
+        subst = unify(a, b, subst)
+
+        if subst is None:
+            success = False
+            break
+
+    if success:
+        print("\nUnification Successful")
+        print("Substitution:", subst)
+    else:
+        print("\nUnification Failed")
